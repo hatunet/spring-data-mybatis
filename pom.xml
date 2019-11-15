@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.data.build</groupId>
         <artifactId>spring-data-parent</artifactId>
-        <version>2.2.1.RELEASE</version>
+        <version>2.1.9.RELEASE</version>
     </parent>
 
     <groupId>io.easybest</groupId>
@@ -31,7 +31,7 @@
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
     <scm>
@@ -44,26 +44,18 @@
         <maven>3.5</maven>
     </prerequisites>
     <properties>
-        <revision>2.2.1.BUILD-SNAPSHOT</revision>
+        <revision>2.1.9.BUILD-SNAPSHOT</revision>
+        <disable.checks>false</disable.checks>
+        <main.basedir>${basedir}</main.basedir>
+        <spring-javaformat.version>0.0.15</spring-javaformat.version>
+        <nohttp-checkstyle.version>0.0.3.RELEASE</nohttp-checkstyle.version>
     </properties>
     <modules>
+        <module>spring-data-mybatis-parent</module>
+        <module>spring-data-mybatis-core</module>
     </modules>
     <build>
         <plugins>
-            <plugin>
-                <groupId>io.spring.javaformat</groupId>
-                <artifactId>spring-javaformat-maven-plugin</artifactId>
-                <version>0.0.15</version>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <inherited>true</inherited>
-                        <goals>
-                            <goal>validate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -77,20 +69,65 @@
                     <dependency>
                         <groupId>io.spring.javaformat</groupId>
                         <artifactId>spring-javaformat-checkstyle</artifactId>
-                        <version>0.0.15</version>
+                        <version>${spring-javaformat.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>io.spring.nohttp</groupId>
+                        <artifactId>nohttp-checkstyle</artifactId>
+                        <version>${nohttp-checkstyle.version}</version>
                     </dependency>
                 </dependencies>
                 <executions>
                     <execution>
                         <id>checkstyle-validation</id>
                         <phase>validate</phase>
-                        <inherited>true</inherited>
                         <configuration>
-                            <configLocation>io/spring/javaformat/checkstyle/checkstyle.xml</configLocation>
+                            <skip>${disable.checks}</skip>
+                            <configLocation>src/checkstyle/checkstyle.xml</configLocation>
+                            <suppressionsLocation>src/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
                             <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                            <propertyExpansion>main.basedir=${main.basedir}</propertyExpansion>
+                            <encoding>UTF-8</encoding>
                         </configuration>
                         <goals>
                             <goal>check</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>nohttp-checkstyle-validation</id>
+                        <phase>validate</phase>
+                        <configuration>
+                            <skip>${disable.checks}</skip>
+                            <configLocation>src/checkstyle/nohttp-checkstyle.xml</configLocation>
+                            <suppressionsLocation>src/checkstyle/nohttp-checkstyle-suppressions.xml
+                            </suppressionsLocation>
+                            <propertyExpansion>main.basedir=${main.basedir}</propertyExpansion>
+                            <encoding>UTF-8</encoding>
+                            <sourceDirectories>${basedir}</sourceDirectories>
+                            <includes>**/*</includes>
+                            <excludes>
+                                **/.git/**/*,**/target/**/,**/.flattened-pom.xml,**/*.class
+                            </excludes>
+                        </configuration>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.spring.javaformat</groupId>
+                <artifactId>spring-javaformat-maven-plugin</artifactId>
+                <version>${spring-javaformat.version}</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <configuration>
+                            <skip>${disable.checks}</skip>
+                        </configuration>
+                        <goals>
+                            <goal>validate</goal>
                         </goals>
                     </execution>
                 </executions>
